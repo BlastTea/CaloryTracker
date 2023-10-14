@@ -31,14 +31,35 @@ def show_and_select_options(options: list[str]):
 def show_menu():
     os.system('cls')
     print_title('CaloryTracker')
-    choice = show_and_select_options(['Makan', 'Olahraga'])
+    choice = show_and_select_options(['Profil', 'Makan', 'Olahraga'])
 
     if choice == -1:
         return show_menu()
     
     if choice == 1:
-        print_title('Makan')
+        profil()
     elif choice == 2:
-        print_title('Olahraga')
+        makan()
+    elif choice == 3:
+        olahraga()
+
+def profil():
+    os.system('cls')
+    print_title('Profil')
+    # TODO: Implement this functions
+
+def makan():
+    os.system('cls') 
+    print_title('Makan')
+    # TODO: Implement this functions
+
+def olahraga():
+    os.system('cls')
+    print_title('Olahraga')
+    # TODO: Implement this functions
+    # buat olahraga kebanyakan rumusnya sama
+    # MET x Berat Badan (kg) x Waktu (jam)
+    # kecuali olahraga yang bobotnya itu dari diri sendiri (push up, pull up, sit up)
+    # (Waktu Latihan (jam) x MET x Berat Badan (kg)) / 200
 
 show_menu()

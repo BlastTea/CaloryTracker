@@ -1,4 +1,3 @@
-from functions import *
 import os
 
 def print_title(text:str, title_length=30):

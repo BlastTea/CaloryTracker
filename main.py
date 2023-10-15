@@ -53,12 +53,30 @@ def makan():
     # TODO: Implement this functions
 
 def olahraga():
-    os.system('cls')
+    os.system('cls')  
     print_title('Olahraga')
-    # TODO: Implement this functions
-    # buat olahraga kebanyakan rumusnya sama
-    # MET x Berat Badan (kg) x Waktu (jam)
-    # kecuali olahraga yang bobotnya itu dari diri sendiri (push up, pull up, sit up)
-    # (Waktu Latihan (jam) x MET x Berat Badan (kg)) / 200
+
+    def hitung_olahraga(bobot, waktu, met):
+        return bobot * waktu * met
+    def hitung_olahraga_diri_sendiri(waktu, met, bobot):
+        return (waktu * met * bobot) / 200
+
+    met_olahraga = 7.0 
+    berat_badan = float(input("Masukkan berat badan (kg): "))
+    waktu = float(input("Masukkan waktu latihan (jam): "))
+
+    print("Pilih jenis olahraga:")
+    print("1. Olahraga umum (MET x Berat Badan x Waktu)")
+    print("2. Olahraga diri sendiri (MET x Waktu x Berat Badan / 200)")
+    pilihan = int(input("Pilihan: "))
+
+    if pilihan == 1:
+        hasil = hitung_olahraga(berat_badan, waktu, met_olahraga)
+    elif pilihan == 2:
+        hasil = hitung_olahraga_diri_sendiri(waktu, met_olahraga, berat_badan)
+    else:
+        print("Pilihan tidak valid")
+        return
+    print("Kalori terbakar:", hasil)
 
 show_menu()

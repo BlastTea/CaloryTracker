@@ -38,17 +38,12 @@ def show_sign_in():
     os.system('cls')
     print_title('CaloryTracker')
     nama = input('Nama : ')
-    password = input('Password : ')
 
     with open('profil.csv') as file:
-        reader = csv.DictReader(file)
-        data = list(reader)
-
-        for i in range(len(data)):
-            if data[i]['nama'] == nama and data[i]['password'] == password:
-                current_profil = nama
-                show_menu()
-                return
+        if len(list(filter(lambda e: e['nama'] == nama and e['password'] == input('Password : '), list(csv.DictReader(file))))) > 0:
+            current_profil = nama
+            show_menu()
+            return
     
     input('Nama atau Password salah')
     show_sign_in()
@@ -193,9 +188,7 @@ def makan():
     kalori = float(input('Masukkan jumlah kalori : '))
 
     with open('makan.csv', 'a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow([current_profil, makanan, kalori, datetime.date.today()])
-
+        csv.writer(file).writerow([current_profil, makanan, kalori, datetime.date.today()])
 
     show_menu()
 
@@ -227,8 +220,7 @@ def olahraga():
     input(f'Kalori terbakar: {hasil}')
 
     with open('olahraga.csv', 'a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow([current_profil, berat_badan, waktu, hasil, datetime.date.today()])
+        csv.writer(file).writerow([current_profil, berat_badan, waktu, hasil, datetime.date.today()])
 
     show_menu()
 

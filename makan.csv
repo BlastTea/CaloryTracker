@@ -1,1 +1,5 @@
-username,makanan,kalori,jumlah_porsi,tanggal
+nama,makanan,kalori,tanggal
+Admin,Mie Goreng,250.0,2023-10-17
+Admin,Ayam,200.0,2023-10-17
+Admin,Tahu,23.0,2023-10-17
+Admin,Tempe,24.0,2023-10-17

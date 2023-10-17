@@ -1,7 +1,7 @@
 import csv
 import os
-
-current_profil = None
+import datetime
+import functools
 
 def divider(length=30):
     print('-' * length)
@@ -32,13 +32,38 @@ def show_and_select_options(options: list[str]):
     os.system('cls')
     return -1
 
+def show_sign_in():
+    global current_profil
+
+    os.system('cls')
+    print_title('CaloryTracker')
+    nama = input('Nama : ')
+    password = input('Password : ')
+
+    with open('profil.csv') as file:
+        reader = csv.DictReader(file)
+        data = list(reader)
+
+        for i in range(len(data)):
+            if data[i]['nama'] == nama and data[i]['password'] == password:
+                current_profil = nama
+                show_menu()
+                return
+    
+    input('Nama atau Password salah')
+    show_sign_in()
+
 
 def show_menu():
     os.system('cls')
     print_title('CaloryTracker')
-    print(f'Jumlah kalori : {jumlah_kalori()}')
-    print(f'Jumlah kalori terbakar : {jumlah_kalori_terbakar()}')
-    print(f'Hari ini Anda kelebihan kalori, silahkan olahraga')
+
+    jumlah_kalori_value = jumlah_kalori()
+    jumlah_kalori_terbakar_value = jumlah_kalori_terbakar()
+
+    print(f'Jumlah kalori : {jumlah_kalori_value}')
+    print(f'Jumlah kalori terbakar : {jumlah_kalori_terbakar_value}')
+    print(f'Hari ini Anda kelebihan kalori, silahkan olahraga' if jumlah_kalori_value >= jumlah_kalori_terbakar_value else f'Hari ini Anda kekurangan kalori, silahkan makan')
     divider()
     choice = show_and_select_options(['Profil', 'Makan', 'Olahraga'])
 
@@ -53,10 +78,20 @@ def show_menu():
         olahraga()
 
 def jumlah_kalori():
-    return '?'
+    global current_profil
+
+    try:
+        return functools.reduce(lambda a, b: a + b, map(lambda m: float(m['kalori']), filter(lambda e: e['tanggal'] == datetime.date.today().isoformat() and e['nama'] == current_profil, list(csv.DictReader(open('makan.csv'))))))
+    except:
+        return 0
 
 def jumlah_kalori_terbakar():
-    return '?'
+    global current_profil
+    
+    try:
+        return functools.reduce(lambda a, b: a + b, map(lambda m: float(m['kalori_terbakar']), filter(lambda e: e['tanggal'] == datetime.date.today().isoformat() and e['nama'] == current_profil, list(csv.DictReader(open('olahraga.csv'))))))
+    except:
+        return 0
 
 def profil():
     os.system('cls')
@@ -88,6 +123,7 @@ def create_new_profile():
     print_title('Profil Baru')
 
     nama = input('Masukkan nama Anda: ')
+    password = input('Masukkan password Anda: ')
     umur = input('Masukkan umur Anda: ')
 
     print('Pilih jenis kelamin:')
@@ -110,7 +146,7 @@ def create_new_profile():
 
     with open('profil.csv', 'a', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow([nama, umur, jenis_kelamin])
+        writer.writerow([nama, password, umur, jenis_kelamin])
 
     os.system('cls')
     print('Profil baru telah dibuat.')
@@ -118,7 +154,7 @@ def create_new_profile():
     show_menu()
 
 def load_existing_profile():
-    global nama, umur, jenis_kelamin
+    global nama, umur, jenis_kelamin, current_profil
 
     with open('profil.csv', 'r') as file:
         reader = csv.reader(file)
@@ -136,6 +172,7 @@ def load_existing_profile():
                 if 1 <= pilihan <= len(nama_list):
                     selected_user = data[pilihan - 1]
                     nama, umur, jenis_kelamin = selected_user
+                    current_profil = nama
                     os.system('cls')
                     print('Profil telah dimuat.')
                     print(f'Nama: {nama}')
@@ -152,18 +189,24 @@ def load_existing_profile():
 def makan():
     os.system('cls') 
     print_title('Makan')
-    input('Masukkan makanan : ')
-    input('Masukkan jumlah kalori : ')
+    makanan = input('Masukkan nama makanan : ')
+    kalori = float(input('Masukkan jumlah kalori : '))
+
+    with open('makan.csv', 'a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([current_profil, makanan, kalori, datetime.date.today()])
+
+
     show_menu()
 
 def olahraga():
+    global current_profil
+
     os.system('cls')  
     print_title('Olahraga')
 
-    def hitung_olahraga(bobot, waktu, met):
-        return bobot * waktu * met
-    def hitung_olahraga_diri_sendiri(waktu, met, bobot):
-        return (waktu * met * bobot) / 200
+    hitung_olahraga = lambda bobot, waktu, met: bobot * waktu * met
+    hitung_olahraga_diri_sendiri = lambda waktu, met, bobot: (waktu * met * bobot) / 200
 
     met_olahraga = 7.0 
     berat_badan = float(input("Masukkan berat badan (kg): "))
@@ -182,6 +225,11 @@ def olahraga():
         print("Pilihan tidak valid")
         return
     input(f'Kalori terbakar: {hasil}')
+
+    with open('olahraga.csv', 'a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([current_profil, berat_badan, waktu, hasil, datetime.date.today()])
+
     show_menu()
 
-show_menu()
+show_sign_in()
